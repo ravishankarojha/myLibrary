@@ -125,11 +125,11 @@ void call(Map parameters = [:]) {
 
 private static boolean extensionExists(Script script, Map config, def stageName) {
     if (!stageName || !(stageName in CharSequence)) {
-        echo "stagename not set?"
+        script.echo "stagename not set?"
         return false
     }
     if (!script.piperStageWrapper.allowExtensions(script)) {
-        echo "allowExtensions is false"
+        script.echo "allowExtensions is false"
         return false
     }
     // NOTE: These keys exist in "config" if they are configured in the general section of the project
@@ -140,8 +140,8 @@ private static boolean extensionExists(Script script, Map config, def stageName)
     }
     def projectInterceptorFile = "${config.projectExtensionsDirectory}${stageName}.groovy"
     def globalInterceptorFile = "${config.globalExtensionsDirectory}${stageName}.groovy"
-    echo "thats the projectInterceptorFile: ${projectInterceptorFile}"
-    echo "thats the globalInterceptorFile: ${globalInterceptorFile}"
+    script.echo "thats the projectInterceptorFile: ${projectInterceptorFile}"
+    script.echo "thats the globalInterceptorFile: ${globalInterceptorFile}"
     return script.fileExists(projectInterceptorFile) || script.fileExists(globalInterceptorFile)
 }
 
