@@ -104,7 +104,9 @@ void call(Map parameters = [:]) {
         }
         boolean runStage = anyStepConditionTrue
         if (stage.getValue().extensionExists) {
+            echo "came into if"
             runStage |= extensionExists(script as Script, config, stage.getValue().extensionExists)
+            echo "runStage after |=: ${runStage}"
         }
         echo "Thats the value of stage: ${stage.getValue()}"
         if (stage.getValue().onlyProductiveBranch && (config.productiveBranch != env.BRANCH_NAME)) {
@@ -136,6 +138,8 @@ private static boolean extensionExists(Script script, Map config, def stageName)
     }
     def projectInterceptorFile = "${config.projectExtensionsDirectory}${stageName}.groovy"
     def globalInterceptorFile = "${config.globalExtensionsDirectory}${stageName}.groovy"
+    echo "thats the projectInterceptorFile: ${projectInterceptorFile}"
+    echo "thats the globalInterceptorFile: ${globalInterceptorFile}"
     return script.fileExists(projectInterceptorFile) || script.fileExists(globalInterceptorFile)
 }
 
