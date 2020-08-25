@@ -46,6 +46,7 @@ stages:
         configKeys:
           - 'githubTokenCredentialsId'
   backendIntegrationTests:
+    onlyProductiveBranch:
     stepConditions:
       npmExecuteScripts:
         npmScripts: 'ci-it-backend'

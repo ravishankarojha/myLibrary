@@ -100,6 +100,9 @@ void call(Map parameters = [:]) {
         if (stage.getValue().extensionExists) {
             runStage |= extensionExists(script as Script, config, stage.getValue().extensionExists)
         }
+        if (stage.getValue().onlyProductiveBranch && (config.productiveBranch != env.BRANCH_NAME)) {
+            runStage = false
+        }
         //echo "${script.commonPipelineEnvironment.configuration}"
         echo "Thats the content of config: ${config}"
         script.commonPipelineEnvironment.configuration.runStage[currentStage] = runStage
