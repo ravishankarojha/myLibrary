@@ -125,9 +125,11 @@ void call(Map parameters = [:]) {
 
 private static boolean extensionExists(Script script, Map config, def stageName) {
     if (!stageName || !(stageName in CharSequence)) {
+        echo "stagename not set?"
         return false
     }
     if (!script.piperStageWrapper.allowExtensions(script)) {
+        echo "allowExtensions is false"
         return false
     }
     // NOTE: These keys exist in "config" if they are configured in the general section of the project
