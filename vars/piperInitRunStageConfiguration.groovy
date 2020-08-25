@@ -105,7 +105,7 @@ void call(Map parameters = [:]) {
         boolean runStage = anyStepConditionTrue
         if (stage.getValue().extensionExists) {
             echo "came into if"
-            runStage |= extensionExists(script as Script, config, stage.getValue().extensionExists)
+            runStage |= extensionExists(script as Script, config, stage.getKey())
             echo "runStage after |=: ${runStage}"
         }
         echo "Thats the value of stage: ${stage.getValue()}"
