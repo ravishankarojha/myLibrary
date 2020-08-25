@@ -100,6 +100,7 @@ void call(Map parameters = [:]) {
         if (stage.getValue().extensionExists) {
             runStage |= extensionExists(script as Script, config, stage.getValue().extensionExists)
         }
+        echo "Thats the value of stage: ${stage.getValue()}"
         if (stage.getValue().onlyProductiveBranch && (config.productiveBranch != env.BRANCH_NAME)) {
             runStage = false
         }
