@@ -46,10 +46,10 @@ stages:
         configKeys:
           - 'githubTokenCredentialsId'
   backendIntegrationTests:
-    onlyProductiveBranch: true
+    extensionExists: true
     stepConditions:
       npmExecuteScripts:
-        npmScripts: 'ci-it-backend'
+        npmScripts: 'ci-itttttt-backend'
       mavenExecuteIntegration:
         filePattern: 'integration-tests/pom.xml'
   frontendIntegrationTests:
