@@ -17,7 +17,9 @@ import groovy.transform.Field
     /**
      * The branch used as productive branch, defaults to master.
      */
-    'productiveBranch'
+    'productiveBranch',
+    'globalExtensionsDirectory',
+    'projectExtensionsDirectory'
 ]
 
 @Field Set STEP_CONFIG_KEYS = GENERAL_CONFIG_KEYS.plus([
