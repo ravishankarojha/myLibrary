@@ -18,8 +18,15 @@ import groovy.transform.Field
      * The branch used as productive branch, defaults to master.
      */
     'productiveBranch',
-    'globalExtensionsDirectory',
-    'projectExtensionsDirectory'
+    /**
+     * Location for individual stage extensions.
+     */
+    'projectExtensionsDirectory',
+    /**
+     * Location for global extensions.
+     */
+    'globalExtensionsDirectory'
+
 ]
 
 @Field Set STEP_CONFIG_KEYS = GENERAL_CONFIG_KEYS.plus([
@@ -104,16 +111,13 @@ void call(Map parameters = [:]) {
         }
         boolean runStage = anyStepConditionTrue
         if (stage.getValue().extensionExists) {
-            echo "came into if"
-            runStage |= extensionExists(script as Script, config, stage.getKey())
-            echo "runStage after |=: ${runStage}"
+            runStage |= extensionExists(script as Script, config, currentStage)
         }
-        echo "Thats the value of stage: ${stage.getValue()}"
+
         if (stage.getValue().onlyProductiveBranch && (config.productiveBranch != env.BRANCH_NAME)) {
             runStage = false
         }
-        //echo "${script.commonPipelineEnvironment.configuration}"
-        echo "Thats the content of config: ${config}"
+
         script.commonPipelineEnvironment.configuration.runStage[currentStage] = runStage
     }
 
@@ -125,11 +129,9 @@ void call(Map parameters = [:]) {
 
 private static boolean extensionExists(Script script, Map config, def stageName) {
     if (!stageName || !(stageName in CharSequence)) {
-        script.echo "stagename not set?"
         return false
     }
     if (!script.piperStageWrapper.allowExtensions(script)) {
-        script.echo "allowExtensions is false"
         return false
     }
     // NOTE: These keys exist in "config" if they are configured in the general section of the project
@@ -140,35 +142,35 @@ private static boolean extensionExists(Script script, Map config, def stageName)
     }
     def projectInterceptorFile = "${config.projectExtensionsDirectory}${stageName}.groovy"
     def globalInterceptorFile = "${config.globalExtensionsDirectory}${stageName}.groovy"
-    script.echo "thats the projectInterceptorFile: ${projectInterceptorFile}"
-    script.echo "thats the globalInterceptorFile: ${globalInterceptorFile}"
     return script.fileExists(projectInterceptorFile) || script.fileExists(globalInterceptorFile)
 }
 
 private static boolean checkConfig(def condition, Map stepConfig) {
+    Boolean configExists = false
     if (condition.getValue() instanceof Map) {
         condition.getValue().each {configCondition ->
             if (MapUtils.getByPath(stepConfig, configCondition.getKey()) in configCondition.getValue()) {
-                return true
+                configExists = true
             }
         }
     } else if (MapUtils.getByPath(stepConfig, condition.getValue())) {
-        return true
+        configExists = true
     }
-    return false
+    return configExists
 }
 
 private static boolean checkConfigKeys(def condition, Map stepConfig) {
+    Boolean configKeyExists = false
     if (condition.getValue() instanceof List) {
         condition.getValue().each { configKey ->
             if (MapUtils.getByPath(stepConfig, configKey)) {
-                return true
+                configKeyExists = true
             }
         }
     } else if (MapUtils.getByPath(stepConfig, condition.getValue())) {
-        return true
+        configKeyExists = true
     }
-    return false
+    return configKeyExists
 }
 
 private static boolean checkForFilesWithPatternFromConfig (Script script, def condition, Map stepConfig) {
@@ -180,38 +182,39 @@ private static boolean checkForFilesWithPatternFromConfig (Script script, def co
 }
 
 private static boolean checkForFilesWithPattern (Script script, def condition) {
+    Boolean filesExist = false
     if (condition.getValue() instanceof List) {
-        for (int j = 0; j < condition.getValue().size(); j++) {
-            if (script.findFiles(glob: condition.getValue()[j])) {
-                return true
+        condition.getValue().each {configKey ->
+            if (script.findFiles(glob: configKey)) {
+                filesExist = true
             }
         }
     } else {
         if (script.findFiles(glob: condition.getValue())) {
-            return true
+            filesExist = true
         }
     }
-    return false
+    return filesExist
 }
 
 private static boolean checkForNpmScriptsInPackages (Script script, def condition) {
     def packages = script.findFiles(glob: '**/package.json', excludes: '**/node_modules/**')
+    Boolean npmScriptExists = false
     for (int i = 0; i < packages.size(); i++) {
         String packageJsonPath = packages[i].path
         Map packageJson = script.readJSON file: packageJsonPath
         Map npmScripts = packageJson.scripts ?: [:]
         if (condition.getValue() instanceof List) {
-            for (int j = 0; j < condition.getValue().size(); j++) {
-                if (npmScripts.containsKey(condition.getValue()[j])) {
-                    return true
+            condition.getValue().each { configKey ->
+                if (npmScripts[configKey]) {
+                    npmScriptExists = true
                 }
             }
         } else {
-            script.echo "came into not a list condition"
-            if (npmScripts.containsKey(condition.getValue())) {
-                return true
+            if (npmScripts[condition.getValue()]) {
+                npmScriptExists = true
             }
         }
     }
-    return false
+    return npmScriptExists
 }
