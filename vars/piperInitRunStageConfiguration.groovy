@@ -201,17 +201,20 @@ private static boolean checkForNpmScriptsInPackages (Script script, def conditio
         Map packageJson = script.readJSON file: packageJsonPath
         Map npmScripts = packageJson.scripts ?: [:]
         if (condition.getValue() instanceof List) {
+            script.echo "came into list condition"
             condition.getValue().each { configKey ->
+                script.echo "thats the configKey: ${configKey}"
+                script.echo "thats the npmScripts: ${npmScripts}"
                 if (npmScripts[configKey]) {
                     return true
                 }
             }
         } else {
+            script.echo "came into not a list condition"
             if (npmScripts[condition.getValue()]) {
                 return true
             }
         }
-        break
     }
     return false
 }
