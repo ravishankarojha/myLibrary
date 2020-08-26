@@ -205,8 +205,8 @@ private static boolean checkForNpmScriptsInPackages (Script script, def conditio
             condition.getValue().each { configKey ->
                 script.echo "thats the configKey: ${configKey}"
                 script.echo "thats the npmScripts: ${npmScripts}"
-                script.echo "thats the npmScripts[${configKey}]: ${npmScripts[configKey]}"
-                script.echo "thats the npmScripts.get(${configKey}): ${npmScripts.get(configKey)}"
+                //script.echo "thats the npmScripts[${configKey}]: ${npmScripts[configKey]}"
+                script.echo "thats npmScripts.containsKey(${configKey}): ${npmScripts.containsKey(configKey)}"
                 //script.echo "thats the npmScripts.ci-it-backend: ${npmScripts.ci-it-backend}"
                 if (npmScripts.containsKey(configKey)) {
                     return true

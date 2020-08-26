@@ -58,4 +58,4 @@ stages:
       npmExecuteScripts:
         filePattern:
           - 'package.json'
-          - '.pipeline/**/backendIntegrationTests.groovy'
+          - 'systems.json'
