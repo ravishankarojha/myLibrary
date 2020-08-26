@@ -202,13 +202,8 @@ private static boolean checkForNpmScriptsInPackages (Script script, def conditio
         Map npmScripts = packageJson.scripts ?: [:]
         if (condition.getValue() instanceof List) {
             script.echo "came into list condition"
-            condition.getValue().each { configKey ->
-                script.echo "thats the configKey: ${configKey}"
-                script.echo "thats the npmScripts: ${npmScripts}"
-                //script.echo "thats the npmScripts[${configKey}]: ${npmScripts[configKey]}"
-                script.echo "thats npmScripts.containsKey(${configKey}): ${npmScripts.containsKey(configKey)}"
-                //script.echo "thats the npmScripts.ci-it-backend: ${npmScripts.ci-it-backend}"
-                if (npmScripts.containsKey(configKey)) {
+            for (int j = 0; j < condition.getValue().size(); j++) {
+                if (npmScripts.containsKey(condition.getValue()[j])) {
                     script.echo "came into if so npmScripts contains the key"
                     return true
                 }
