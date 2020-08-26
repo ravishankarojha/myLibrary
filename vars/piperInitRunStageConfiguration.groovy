@@ -209,6 +209,7 @@ private static boolean checkForNpmScriptsInPackages (Script script, def conditio
                 script.echo "thats npmScripts.containsKey(${configKey}): ${npmScripts.containsKey(configKey)}"
                 //script.echo "thats the npmScripts.ci-it-backend: ${npmScripts.ci-it-backend}"
                 if (npmScripts.containsKey(configKey)) {
+                    script.echo "came into if so npmScripts contains the key"
                     return true
                 }
             }
