@@ -181,8 +181,8 @@ private static boolean checkForFilesWithPatternFromConfig (Script script, def co
 
 private static boolean checkForFilesWithPattern (Script script, def condition) {
     if (condition.getValue() instanceof List) {
-        condition.getValue().each {configKey ->
-            if (script.findFiles(glob: configKey)) {
+        for (int j = 0; j < condition.getValue().size(); j++) {
+            if (script.findFiles(glob: condition.getValue()[j])) {
                 return true
             }
         }
@@ -201,10 +201,8 @@ private static boolean checkForNpmScriptsInPackages (Script script, def conditio
         Map packageJson = script.readJSON file: packageJsonPath
         Map npmScripts = packageJson.scripts ?: [:]
         if (condition.getValue() instanceof List) {
-            script.echo "came into list condition"
             for (int j = 0; j < condition.getValue().size(); j++) {
                 if (npmScripts.containsKey(condition.getValue()[j])) {
-                    script.echo "came into if so npmScripts contains the key"
                     return true
                 }
             }
