@@ -46,13 +46,16 @@ stages:
         configKeys:
           - 'githubTokenCredentialsId'
   backendIntegrationTests:
-    extensionExists: true
     stepConditions:
       npmExecuteScripts:
-        npmScripts: 'ci-itttttt-backend'
+        npmScripts:
+          - 'ci-it-backend'
+          - 'ci-it-frontend'
       mavenExecuteIntegration:
         filePattern: 'integration-tests/pom.xml'
   frontendIntegrationTests:
     stepConditions:
       npmExecuteScripts:
-        npmScripts: 'ci-it-frontend'
+        filePattern:
+          - 'package.json'
+          - '.pipeline/**/backendIntegrationTests.groovy'
