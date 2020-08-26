@@ -208,7 +208,7 @@ private static boolean checkForNpmScriptsInPackages (Script script, def conditio
             }
         } else {
             script.echo "came into not a list condition"
-            if (npmScripts[condition.getValue()]) {
+            if (npmScripts.containsKey(condition.getValue())) {
                 return true
             }
         }
